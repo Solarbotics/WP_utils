@@ -48,21 +48,29 @@ args = get_cli_arguments()
 
 for line in args.input:
     print("Line: {}".format(line))
-    print(line.split('{'))
-    pattern = re.compile(r"^a:\d*:(.*)")
+#    print(line.split('{'))
+    pattern = re.compile(r"^a:.*{(.*)")
     match = pattern.search(line)
-    result = match.group(1)
+    result = match.group(1).rstrip('; }')
+    print("Result={}".format(result))
+    result = re.split('i:',result)
+    result.remove('')
+    print(result)
+    #print(type(re.split('i:',result)))
+
+
+#    print(result.split('";'))
+#    print("     {}".format(re.split('";',result)))
+#     delim='";'
+#     for x in result:
+#         s = [e+delim for e in x.split(delim) if e]
+#         print(s)
+
+    #print("     {}".format(re.split
     #print("Regex:\n{}".format(match.group(1)))
-    print()
-
-
-
-
-
 
 #print("input path: {0}".format(args.input))
 # for line in args.input:
 # #    print (line.strip())
 #     print(unserialize(line))
 
-# Parse the serialized string
