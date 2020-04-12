@@ -15,7 +15,10 @@ as example) as:
         :
         "anotherplugin.php"
     ;)
-
+Some help:
+https://wordpress.stackexchange.com/questions/45109/how-to-make-sense-of-the-active-plugins-option-value-to-enable-and-disable-certa
+"""
+"""
 ToDO:
 - Read in the list from saved file (copied from the database field)
 - Make it human-readable (I find a newline before each "a:[0-9]*.," regex does nicely)
@@ -26,3 +29,40 @@ ToDO:
 
 Spec: Dave Hrynkiw, April 11 2020
 """
+import argparse
+import re
+from phpserialize import serialize, unserialize
+# import os
+# print(os.getcwd())
+
+# get the defaults from command line
+def get_cli_arguments():
+    parser = argparse.ArgumentParser(description='Wordpress wp_options manipulator')
+    parser.add_argument('-i', '--input', type=argparse.FileType('r'), required=False, metavar='file', help='WP file containing wp_options',
+                        default='wp_options.txt')
+    parser.add_argument('-o', '--output', type=str, required=False, metavar='file',  help='WP file output file',
+                        default='wp_options_new.txt')
+    return parser.parse_args()
+
+args = get_cli_arguments()
+
+for line in args.input:
+    print("Line: {}".format(line))
+    print(line.split('{'))
+    pattern = re.compile(r"^a:\d*:(.*)")
+    match = pattern.search(line)
+    result = match.group(1)
+    #print("Regex:\n{}".format(match.group(1)))
+    print()
+
+
+
+
+
+
+#print("input path: {0}".format(args.input))
+# for line in args.input:
+# #    print (line.strip())
+#     print(unserialize(line))
+
+# Parse the serialized string
