@@ -49,17 +49,23 @@ args = get_cli_arguments()
 for line in args.input:
     print("Line: {}".format(line))
 #    print(line.split('{'))
-    pattern = re.compile(r"^a:.*{(.*)")
-    match = pattern.search(line)
+
+    match = re.search(r"^a:.*{(.*)",line)
     result = match.group(1).rstrip('; }')
-    print("Result={}".format(result))
+    #print("Result={}".format(result))
     result = re.split('i:',result)
     result.remove('')
-    print(result)
+    #print(result)
     result = ["i:" + s for s in result]
     print(result)
-    print(result[0])
-    #print(type(re.split('i:',result)))
+    for i in range(len(result)):
+        print("Element {}={}".format(i,result[i]))
+        plugin_name=(re.search(r'(?<=")(.*)(?=")', result[i]).group())    #.group() gets the value, span() gets the start, end of match
+        plugin_length=(re.search(r'(?<=")(.*)(?=")', result[i]).span())
+        plugin_length1 = plugin_length[1] - plugin_length[0]
+        print("name={}, span={}, len={}".format(plugin_name, plugin_length, plugin_length1))
+
+
 
 
 #    print(result.split('";'))
