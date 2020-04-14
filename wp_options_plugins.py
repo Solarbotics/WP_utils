@@ -56,6 +56,9 @@ for line in args.input:
     result = re.split('i:',result)
     result.remove('')
     print(result)
+    result = ["i:" + s for s in result]
+    print(result)
+    print(result[0])
     #print(type(re.split('i:',result)))
 
 
