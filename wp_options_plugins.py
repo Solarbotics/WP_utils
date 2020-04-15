@@ -82,7 +82,11 @@ if args.list:
 
 # If its a delete request, cycle through the list, and delete the lines by index number
 if args.func == 'del':
-    print("Hi Dave")
     numbers = args.numbers
     for n in numbers:
-        print(n)
+        print(result[n])
+    ans=input("***Confirm***: Remove these plugins from the list (y/N)?: ")
+    if ans == 'Y' or ans == 'y':
+        print("Confirmed")
+    else:
+        print("Aborted")
