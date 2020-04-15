@@ -76,9 +76,11 @@ def print_plugin_list(plugin_list):
         #print("name={}, span={}, len={}".format(plugin_name,plugin_length, plugin_length1))
         print("{}: {}".format(i, plugin_name))   # Print an indexed list of plugins to choose from.
 
+# If is a list request, just pump out the list with an index number
 if args.list:
     print_plugin_list(result)
 
+# If its a delete request, cycle through the list, and delete the lines by index number
 if args.func == 'del':
     print("Hi Dave")
     numbers = args.numbers
