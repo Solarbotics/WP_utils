@@ -31,26 +31,26 @@ Spec: Dave Hrynkiw, April 11 2020
 """
 import argparse
 import re
-from phpserialize import serialize, unserialize
-# import os
-# print(os.getcwd())
 
 # get the defaults from command line
 def get_cli_arguments():
     parser = argparse.ArgumentParser(description='Wordpress wp_options manipulator')
+
     parser.add_argument('-i', '--input', type=argparse.FileType('r'), required=False, metavar='file', help='WP file containing wp_options',
                         default='wp_options.txt')
     parser.add_argument('-o', '--output', type=str, required=False, metavar='file',  help='WP file output file',
                         default='wp_options_new.txt')
-    parser.add_argument('-l', '--list', type=str, required=False, help='Display Plugins list')
-    parser.add_argument('-d', '--delete', type=str, required=False, help='Delete Plugins by number')
+    parser.add_argument('-l', '--list', required=False, help='Display Plugins list', action='store_true')
+
+    subparsers = parser.add_subparsers(dest='func')
+    delplugin_parser = subparsers.add_parser('del')
+    delplugin_parser.add_argument('numbers', type=int, nargs='*')
     return parser.parse_args()
 
 args = get_cli_arguments()
-
 # Process the input file
 for line in args.input:
-    print("Line: {}".format(line)) #Disable when done debugging
+    #print("Line: {}".format(line)) #Disable when done debugging
 
     match = re.search(r"^a:.*{(.*)",line)   # strip off the preamble "a:0{" from the datafield entry
     result = match.group(1).rstrip('; }')   # strip off the matching end "}"
@@ -59,7 +59,7 @@ for line in args.input:
     result.remove('')                       # delete the initial blank entry
     #print(result)
     result = ["i:" + s for s in result]     # add the stripped 'i:' back to the elements
-    print(result)
+    #print(result)
     # for i in range(len(result)):
     #     print("Element {}={}".format(i,result[i]))
     #     plugin_name=(re.search(r'(?<=")(.*)(?=")', result[i]).group())    #.group() gets the value, span() gets the start, end of match
@@ -76,5 +76,11 @@ def print_plugin_list(plugin_list):
         #print("name={}, span={}, len={}".format(plugin_name,plugin_length, plugin_length1))
         print("{}: {}".format(i, plugin_name))   # Print an indexed list of plugins to choose from.
 
+if args.list:
+    print_plugin_list(result)
 
-
+if args.func == 'del':
+    print("Hi Dave")
+    numbers = args.numbers
+    for n in numbers:
+        print(n)
