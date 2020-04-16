@@ -49,6 +49,9 @@ def get_cli_arguments():
     subparsers = parser.add_subparsers(dest='func')
     delplugin_parser = subparsers.add_parser('del')
     delplugin_parser.add_argument('numbers', type=int, nargs='*')
+    listplugin_parser = subparsers.add_parser('list')
+    listplugin_parser.add_argument('vals', type=str, nargs='*')
+
     return parser.parse_args()
 
 
@@ -83,38 +86,46 @@ def print_plugin_list(plugin_list):
 
 
 # If is a list request, just pump out the list with an index number
-if args.list:
+if args.list or args.func == 'list':
     print_plugin_list(result)
 
 # If its a delete request, cycle through the list, and delete the lines by index number
 if args.func == 'del':
     numbers = args.numbers
-    print(datetime.now())
     for n in numbers:
         print(result[n])
-        print(args.input.name)
     ans = input("***Confirm***: Remove these plugins from the list (y/N)?: ")
     if ans == 'Y' or ans == 'y':
         print("Confirmed")
         # check for and create a backup file from the sourcefile name
         if not os.path.exists(args.input.name + '.backup'):
-            pass
+            with open(args.input.name + '.backup', 'w'):
+                pass
 
         with open(args.input.name + '.backup', 'a') as backupfile:
             backupdate = datetime.now()
             for n in numbers:
-                print("{},{}".format(backupdate, result[n]))
+                # print("{},{}".format(backupdate, result[n]))
                 print("{},{}".format(backupdate, result[n]), file=backupfile)
             print("Deleted plugins backup data written")
-        print(numbers)
+
+        # Do the actual delete from the data list
         for m in numbers:
-            print("{}={}".format(m, result[m]))
+            # print("{}={}".format(m, result[m]))
             del result[m]
-        # print_plugin_list(result)
-        # for i, r in enumerate(plugin_list, 0):
-        #     plugin_name = (re.search(r'(?<=")(.*)(?=")', plugin_list[i]).group())  # .group() gets the plugin values
-        #     plugin_length = (re.search(r'(?<=")(.*)(?=")', plugin_list[i]).span())  # .span() gets start & end of match
-        #     plugin_length1 = plugin_length[1] - plugin_length[0]  # calculate length of plugin name (needed)
-        #     if i in numbers:
+
+        #Recreate the list
+
+        #print_plugin_list(result)
+        with open(args.output, 'w') as outputfile:
+            output_list_prefix="a:"+str(len(result))+":{"    #set up the preamble
+            print(output_list_prefix, file=outputfile, end = '')
+            for i, r in enumerate(result, 0):
+                plugin_name = (re.search(r'(?<=")(.*)(?=")', result[i]).group())  # .group() gets the plugin values
+                plugin_length_tuple = (re.search(r'(?<=")(.*)(?=")', result[i]).span())  # .span() gets start & end of match
+                plugin_length = plugin_length_tuple[1] - plugin_length_tuple[0]  # calculate length of plugin name (needed)needed
+                print("i:{};s:{}:\"{}\";".format(i,plugin_length,plugin_name), file=outputfile, end = '')
+            print("}", file=outputfile, end = '')
+        print("{} written with new string to dump into wp_options / active_plugins field".format(args.output))
     else:
-        print("Aborted")
+        print("Cancelled")
