@@ -1,6 +1,11 @@
-"""This field is a serialized string as defined (using the following
+"""
+wp_options_plugins.py
+A utility to take the dump from wp_options / active_plugins database entry, and modify it for re-inclusion to disable troublesome plugins
+See the README.MD for operation.
+
+This field is a serialized string as defined (using the following
 as example) as:
-    a:2:{i:0,s:10:"plugin.php";i:1,s:17:"anotherplugin.php";}
+    a:2:{i:0,s:10:"plugin.php";i:1,s:17:"plugin_2.php";}
     a:2 = 2 plugins active
     :{
         i:0 (= 0th plugin in list)
@@ -37,7 +42,7 @@ def get_cli_arguments():
                         default='wp_options_new.txt')
     parser.add_argument('-l', '--list', required=False, help='Display Plugins list', action='store_true')
 
-    subparsers = parser.add_subparsers(dest='func')
+    subparsers = parser.add_subparsers(dest='func', help='what to do?')
     delplugin_parser = subparsers.add_parser('del')
     delplugin_parser.add_argument('numbers', type=int, nargs='*')
     listplugin_parser = subparsers.add_parser('list')
